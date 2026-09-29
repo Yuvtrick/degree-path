@@ -15,5 +15,18 @@ services:
       timeout: 5s
       retries: 10
 
+  backend:
+    build: ./backend
+    environment:
+      # "postgres" resolves to the database service on the Compose network.
+      DB_URL: jdbc:postgresql://postgres:5432/degreepath
+      DB_USERNAME: ${DB_USERNAME:-degreepath}
+      DB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD must be set (see .env.example)}
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
 volumes:
   postgres-data:
